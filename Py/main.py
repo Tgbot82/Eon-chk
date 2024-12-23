@@ -10,7 +10,7 @@ from GATEAU import Tele
 from colorama import Fore
 sto = {"stop":False}
 token = "7710903253:AAHxGa0V2AD0GOXsUDjhey2i48u1ZdpknNk" 
-id =  6604452400,7068847975,943640278,1210263979
+id =  1210263979
 bot=telebot.TeleBot(token,parse_mode="HTML")
 @bot.message_handler(commands=["stop"])
 def start(message):
