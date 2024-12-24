@@ -12,8 +12,8 @@ API_KEY = 'AIzaSyDCXLl4Ef_lBqRXwG9YcDBVnjoWl_L5ZdY'
 CX = '12e429663ae7a4ccb'
 
 PROXIES = [
-    {"http": "http://3.212.148.199:3128"},
-    {"http": "http://3.126.147.182:80"}
+    {"http": "http://i0nzgypoh4ks0ig:k0knh7gr4r980w3@rp.proxyscrape.com:6060"},
+    {"http": ""}
 ]
 
 GATEWAYS = {
