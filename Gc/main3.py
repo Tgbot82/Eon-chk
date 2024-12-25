@@ -6,8 +6,7 @@ import telebot
 
 BOT_TOKEN = '7632190595:AAGVhetz8f2PJniACVnMhZPrfRNHw_jdDT0'
 ADMIN_USER_ID = '6604452400'
-CHANNEL_ID = ''
-YOUR_PRIVATE_GROUP_CHAT_ID = '-1002384628131'
+CHANNEL_ID = '@Eon_Scrap'
 
 API_KEY = 'AIzaSyDCXLl4Ef_lBqRXwG9YcDBVnjoWl_L5ZdY'
 CX = '12e429663ae7a4ccb'
@@ -44,6 +43,7 @@ GATEWAYS = {
     'amazon pay': 'Amazon Pay'
 }
 
+# Initialize bot
 bot = telebot.TeleBot(BOT_TOKEN)
 
 def init_db():
@@ -131,6 +131,7 @@ def scrape_site(url):
         "gateway": gateway if gateway else "None"
     }
 
+# Self-generating random keywords function
 def generate_dynamic_keywords():
     base_keywords = [
         'inurl:/checkout intext:"pay now"',
@@ -152,18 +153,11 @@ def generate_dynamic_keywords():
     random.shuffle(base_keywords)
     return base_keywords
 
-def auto_process(bot, message):
-    user_id = message.from_user.id
-    if user_id != int(ADMIN_USER_ID):
-        bot.send_message(message.chat.id, "You are not authorized to use this command.")
-        return
-
-    bot.send_message(message.chat.id, "Generating random keywords and starting the process...")
-
+def auto_process(bot):
     conn, c = init_db()
 
     while True:
-        uploaded_keywords = generate_dynamic_keywords()
+        uploaded_keywords = generate_dynamic_keywords()  # Generate random keywords
 
         for keyword in uploaded_keywords:
             search_results = google_search(keyword)
@@ -184,10 +178,10 @@ def auto_process(bot, message):
 
                 time.sleep(2)
 
-        time.sleep(600)
+        # Sleep for a random time interval between keyword generation
+        time.sleep(random.randint(3600, 7200))  # Sleep for 1 to 2 hours
 
-    conn.close()
-
+# Update the bot handler to process the auto command
 @bot.message_handler(commands=['auto'])
 def handle_auto(message):
     user_id = message.from_user.id
@@ -195,11 +189,10 @@ def handle_auto(message):
         bot.send_message(message.chat.id, "You are not authorized to use this command.")
         return
 
-    if message.chat.id != int(YOUR_PRIVATE_GROUP_CHAT_ID):
-        bot.send_message(message.chat.id, "This command can only be used in the private group.")
-        return
+    bot.send_message(message.chat.id, "Bot will now start generating and processing random keywords automatically.")
 
-    auto_process(bot, message)
+    # Start auto process without sending completion message
+    auto_process(bot)
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
@@ -210,6 +203,7 @@ def handle_start(message):
 
     bot.send_message(message.chat.id, "Bot is ready. Use /auto to start automatic scraping.")
 
+# Handle Blocklist command
 @bot.message_handler(commands=['bl'])
 def handle_blocklist(message):
     user_id = message.from_user.id
@@ -217,6 +211,7 @@ def handle_blocklist(message):
         bot.send_message(message.chat.id, "You are not authorized to use this command.")
         return
 
+    # Extract URL from message
     blocked_url = message.text.strip().split(' ', 1)
     if len(blocked_url) < 2:
         bot.send_message(message.chat.id, "Please provide a valid URL to block.")
@@ -231,6 +226,7 @@ def handle_blocklist(message):
         block_site(conn, c, url)
         bot.send_message(message.chat.id, f"The site {url} has been blocklisted.")
 
+# Continuous bot polling
 def main():
     bot.polling()
 
